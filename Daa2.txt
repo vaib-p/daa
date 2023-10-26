@@ -1,0 +1,144 @@
+Name: Vaibhav Kailas Pawar
+Roll No: TEB37
+Problem statement: Write a program to implement Bellman-Ford Algorithm using Dynamic Programming and verify the
+time complexity
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+
+#define INF 999999999
+int hasNegativeCycle(int graph[3][10], int v, int e, int dist[]) {
+    for (int j = 0; j < e; j++) {
+        int srcv = graph[0][j];
+        int destv = graph[1][j];
+        int weight = graph[2][j];
+
+        if (dist[srcv] != INF && dist[srcv] + weight < dist[destv]) {
+            return 1; // Negative-weight cycle detected
+        }
+    }
+    return 0; // No negative-weight cycle found
+}
+void printarray(int arr[3][10], int e) {
+    for (int j = 0; j < e; j++) {
+        printf("distance from vertex %d to vertex %d is %d\n", arr[0][j], arr[1][j], arr[2][j]);
+    }
+}
+
+void bellman(int graph[3][10], int v, int e, int src) {
+    int dist[v];
+    for (int i = 1; i <= v; i++) {
+        dist[i] = INF;
+    }
+    dist[src] = 0;
+
+    for (int i = 0; i < v - 1; i++) {
+        for (int j = 0; j < e; j++) {
+            int srcv = graph[0][j];
+            int destv = graph[1][j];
+            int weight = graph[2][j];
+
+            if (dist[srcv] != INF && dist[srcv] + weight < dist[destv]) {
+                dist[destv] = dist[srcv] + weight;
+
+                // Display the relaxation step
+                printf("Relaxation step %d:\n", i + 1);
+                printf("Updating distance to vertex %d: %d -> %d\n", destv, dist[destv] - weight, dist[destv]);
+            }
+        }
+    }
+    
+    if (hasNegativeCycle(graph, v, e, dist)) {
+        printf("Graph contains a negative-weight cycle.\n");
+        return;
+    }
+    
+    for (int j = 1; j <= v; j++) {
+        printf("Shortest distance from source to vertex %d is %d\n", j, dist[j]);
+    }
+}
+
+int main() {
+    int graph[3][10];
+    int v, e;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &v);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &e);
+
+    printf("Enter the graph data (source destination weight):\n");
+    for (int i = 0; i < e; i++) {
+        scanf("%d %d %d", &graph[0][i], &graph[1][i], &graph[2][i]);
+    }
+
+    printarray(graph, e);
+    printf("\n");
+
+    int src;
+    printf("Enter the source vertex: ");
+    scanf("%d", &src);
+
+    bellman(graph, v, e, src);
+
+    return 0;
+}
+ 
+
+-------------------output-----------------------
+Enter the number of vertices: 7
+Enter the number of edges: 10
+Enter the graph data (source destination weight):
+1 3 5
+1 2 6
+1 4 5
+2 5 -1
+3 5 1
+4 6 -1
+6 7 3
+5 7 3
+4 3 -2
+3 2 -2
+distance from vertex 1 to vertex 3 is 5
+distance from vertex 1 to vertex 2 is 6
+distance from vertex 1 to vertex 4 is 5
+distance from vertex 2 to vertex 5 is -1
+distance from vertex 3 to vertex 5 is 1
+distance from vertex 4 to vertex 6 is -1
+distance from vertex 6 to vertex 7 is 3
+distance from vertex 5 to vertex 7 is 3
+distance from vertex 4 to vertex 3 is -2
+distance from vertex 3 to vertex 2 is -2
+
+Enter the source vertex: 1
+Relaxation step 1:
+Updating distance to vertex 3: 0 -> 5
+Relaxation step 1:
+Updating distance to vertex 2: 0 -> 6
+Relaxation step 1:
+Updating distance to vertex 4: 0 -> 5
+Relaxation step 1:
+Updating distance to vertex 5: 6 -> 5
+Relaxation step 1:
+Updating distance to vertex 6: 5 -> 4
+Relaxation step 1:
+Updating distance to vertex 7: 4 -> 7
+Relaxation step 1:
+Updating distance to vertex 3: 5 -> 3
+Relaxation step 1:
+Updating distance to vertex 2: 3 -> 1
+Relaxation step 2:
+Updating distance to vertex 5: 1 -> 0
+Relaxation step 2:
+Updating distance to vertex 7: 0 -> 3
+Shortest distance from source to vertex 1 is 0
+Shortest distance from source to vertex 2 is 1
+Shortest distance from source to vertex 3 is 3
+Shortest distance from source to vertex 4 is 5
+Shortest distance from source to vertex 5 is 0
+Shortest distance from source to vertex 6 is 4
+Shortest distance from source to vertex 7 is 3
